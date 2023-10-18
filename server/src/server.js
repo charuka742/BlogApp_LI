@@ -28,6 +28,13 @@ app.put('/api/articles/:name/upvote', async (req, res) => {
     const client = new MongoClient('mongodb://127.0.0.1:27017');
     await client.connect();
 
+    const db = client.db('react-blog-db');
+    await db.collection('articles').updateOne({ name },{
+        $inc: {upvotes :1},
+    });
+
+    const article = await db.collection('articles').findOne({name});
+
     if(article){
         article.upvotes = article.upvotes + 1;
         res.send(`The ${name} article now has ${article.upvotes} upvotes.`);
