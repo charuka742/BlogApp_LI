@@ -1,29 +1,32 @@
 import express from "express";
-
-let articleInfo = [{
-    name:'learn-react',
-    upvotes: 0,
-    comments:[],
-},
-{
-    name:'learn-node',
-    upvotes: 0,
-    comments:[],
-},
-{
-    name:'mongodb',
-    upvotes: 0,
-    comments:[],
-}]
-
+import {MongoClient} from 'mongodb';  
 const app = express();
 app.use(express.json());
 
 
+app.get('/api/articles/:name', async(req, res) => {
+    const { name } = req.params;
+    const client = new MongoClient('mongodb://127.0.0.1:27017');
+    await client.connect();
 
-app.put('/api/articles/:name/upvote', (req, res) => {
+    const db = client.db('react-blog-db');
+
+    const article = await db.collection('articles').findOne({ name });
+
+    if(article){
+        res.json(article);
+    } else {
+        res.sendStatus(404);
+    }
+    
+
+})
+
+
+app.put('/api/articles/:name/upvote', async (req, res) => {
     const {name} = req.params;
-    const article = articleInfo.find(a => a.name === name);
+    const client = new MongoClient('mongodb://127.0.0.1:27017');
+    await client.connect();
 
     if(article){
         article.upvotes = article.upvotes + 1;
@@ -33,6 +36,7 @@ app.put('/api/articles/:name/upvote', (req, res) => {
     }
 
 });
+
 
 app.post('/api/articles/:name/comments', (req, res) => {
     const {name} = req.params;
@@ -47,18 +51,6 @@ app.post('/api/articles/:name/comments', (req, res) => {
     }
 
 })
-
-
-// app.get('/hello/:name', (req, res) => {
-//     const {name} = req.params;
-//     res.send(`Hello ${name} !!`);
-// });
-
-
-// app.post('/hello', (req, res) => {
-//     res.send(`Hello ${req.body.name}!`);
-// });
-
 
 app.listen(8000, () => {
     console.log("Server is listening on port 8000");
