@@ -96,6 +96,7 @@ nav a:hover {
 #upvotes-section button, p {
   display: inline-block;
   margin-right: 16px;
+  
 }
 
 .comment {
