@@ -8,6 +8,10 @@
 # testing
 /coverage
 
+#coustomized ignorefiles
+credentials.json
+mongo-db-data
+
 # production
 /build
 
